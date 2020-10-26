@@ -14,11 +14,9 @@ public class Server implements Runnable {
     private ServerSocket socket;
     private ArrayList<Socket> clients;
     private ArrayList<ClientThread> clientThreads;
-    public ObservableList<String> serverLog;
     public ObservableList<String> clientNames;
     public Server(int portNumber) throws IOException {
         this.portNumber = portNumber;
-        serverLog = FXCollections.observableArrayList();
         clientNames = FXCollections.observableArrayList();
         clients = new ArrayList<>();
         clientThreads = new ArrayList<>();
@@ -30,7 +28,6 @@ public class Server implements Runnable {
 
         try {
             socket = new ServerSocket(this.portNumber);
-            serverLog = FXCollections.observableArrayList();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,14 +38,10 @@ public class Server implements Runnable {
         try {
             while (true) {
 
-                Platform.runLater(() -> serverLog.add("Listening for client"));
-
                 final Socket clientSocket = socket.accept();
 
                 clients.add(clientSocket);
-                Platform.runLater(() -> serverLog.add("Client " + clientSocket.getRemoteSocketAddress() + " connected"));
-                ClientThread clientThreadHolderClass = new ClientThread(
-                        clientSocket, this);
+                ClientThread clientThreadHolderClass = new ClientThread(clientSocket, this);
                 Thread clientThread = new Thread(clientThreadHolderClass);
                 clientThreads.add(clientThreadHolderClass);
                 clientThread.setDaemon(true);
@@ -64,7 +57,6 @@ public class Server implements Runnable {
     public void clientDisconnected(ClientThread client) {
 
         Platform.runLater(() -> {
-            serverLog.add("Client " + client.getClientSocket().getRemoteSocketAddress() + " disconnected");
             clients.remove(clientThreads.indexOf(client));
             clientNames.remove(clientThreads.indexOf(client));
             clientThreads.remove(clientThreads.indexOf(client));

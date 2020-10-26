@@ -45,20 +45,13 @@ public class ServerScreen extends Application {
         serverThread.start();
         threads.add(serverThread);
 
-        Label logLabel = new Label("Server Log");
-        ListView<String> logView = new ListView<String>();
-        ObservableList<String> logList = server.serverLog;
-        logView.setItems(logList);
-
         Label clientLabel = new Label("Clients Connected");
         ListView<String> clientView = new ListView<String>();
         ObservableList<String> clientList = server.clientNames;
         clientView.setItems(clientList);
 
-        rootPane.add(logLabel, 0, 0);
-        rootPane.add(logView, 0, 1);
-        rootPane.add(clientLabel, 0, 2);
-        rootPane.add(clientView, 0, 3);
+        rootPane.add(clientLabel, 0, 0);
+        rootPane.add(clientView, 0, 1);
 
         primaryStage.show();
 

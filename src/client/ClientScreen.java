@@ -5,6 +5,7 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -106,6 +107,7 @@ public class ClientScreen extends Application {
 
         rootPane.add(chatListView, 0, 0);
         rootPane.add(chatTextField, 0, 1);
+
 
         return new Scene(rootPane, 400, 400);
 
