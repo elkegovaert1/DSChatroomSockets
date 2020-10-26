@@ -89,35 +89,24 @@ public class ClientScreen extends Application {
     }
 
     public Scene makeChatUI(Client client) {
-        /* Make the root pane and set properties */
         GridPane rootPane = new GridPane();
         rootPane.setPadding(new Insets(20));
         rootPane.setAlignment(Pos.CENTER);
         rootPane.setHgap(10);
         rootPane.setVgap(10);
 
-        /*
-         * Make the Chat's listView and set it's source to the Client's chatLog
-         * ArrayList
-         */
         ListView<String> chatListView = new ListView<String>();
         chatListView.setItems(client.chatLog);
 
-        /*
-         * Make the chat text box and set it's action to send a message to the
-         * server
-         */
         TextField chatTextField = new TextField();
         chatTextField.setOnAction(event -> {
             client.writeToServer(chatTextField.getText());
             chatTextField.clear();
         });
 
-        /* Add the components to the root pane */
         rootPane.add(chatListView, 0, 0);
         rootPane.add(chatTextField, 0, 1);
 
-        /* Make and return the scene */
         return new Scene(rootPane, 400, 400);
 
     }

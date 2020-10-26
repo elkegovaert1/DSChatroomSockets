@@ -20,8 +20,8 @@ public class Server implements Runnable {
         this.portNumber = portNumber;
         serverLog = FXCollections.observableArrayList();
         clientNames = FXCollections.observableArrayList();
-        clients = new ArrayList<Socket>();
-        clientThreads = new ArrayList<ClientThread>();
+        clients = new ArrayList<>();
+        clientThreads = new ArrayList<>();
         socket = new ServerSocket(portNumber);
 
     }
@@ -41,17 +41,12 @@ public class Server implements Runnable {
         try {
             while (true) {
 
-                Platform.runLater(() -> {
-                    serverLog.add("Listening for client");
-
-                });
+                Platform.runLater(() -> serverLog.add("Listening for client"));
 
                 final Socket clientSocket = socket.accept();
 
                 clients.add(clientSocket);
-                Platform.runLater(() -> {
-                    serverLog.add("Client " + clientSocket.getRemoteSocketAddress() + " connected");
-                });
+                Platform.runLater(() -> serverLog.add("Client " + clientSocket.getRemoteSocketAddress() + " connected"));
                 ClientThread clientThreadHolderClass = new ClientThread(
                         clientSocket, this);
                 Thread clientThread = new Thread(clientThreadHolderClass);

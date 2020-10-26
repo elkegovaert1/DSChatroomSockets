@@ -9,29 +9,21 @@ import java.net.SocketException;
 
 import javafx.application.Platform;
 
-/* Thread Class for each incoming client */
 public class ClientThread implements Runnable {
 
-    /* The socket of the client */
     private Socket clientSocket;
-    /* Server class from which thread was called */
     private Server baseServer;
     private BufferedReader incomingMessageReader;
     private PrintWriter outgoingMessageWriter;
-    /* The name of the client */
     private String clientName;
 
     public ClientThread(Socket clientSocket, Server baseServer) {
         this.setClientSocket(clientSocket);
         this.baseServer = baseServer;
         try {
-            /*
-             * Reader to get all incoming messages that the client passes to the
-             * server
-             */
             incomingMessageReader = new BufferedReader(new InputStreamReader(
                     clientSocket.getInputStream()));
-            /* Writer to write outgoing messages from the server to the client */
+
             outgoingMessageWriter = new PrintWriter(
                     clientSocket.getOutputStream(), true);
 
@@ -63,10 +55,6 @@ public class ClientThread implements Runnable {
     }
 
     public String getClientNameFromNetwork() throws IOException {
-        /*
-         * Get the name of the client, which is the first data transaction the
-         * server-client make
-         */
         return incomingMessageReader.readLine();
     }
 
