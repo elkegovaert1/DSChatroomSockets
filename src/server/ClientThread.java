@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 
+import client.Client;
+import client.ClientScreen;
 import javafx.application.Platform;
 
 public class ClientThread implements Runnable {
@@ -35,12 +37,25 @@ public class ClientThread implements Runnable {
     public void run() {
         try {
             this.clientName = getClientNameFromNetwork();
-            Platform.runLater(() -> baseServer.clientNames.add(clientName + " - "
-                    + clientSocket.getRemoteSocketAddress()));
+            Platform.runLater(() -> {
+                baseServer.clientNames.add(clientName);
+                String s = baseServer.getOnlineClientsString();
+                baseServer.writeToAllSockets(s);
+            });  
+                           
             String inputToServer;
             while (true) {
                 inputToServer = incomingMessageReader.readLine();
-                baseServer.writeToAllSockets(inputToServer);
+                //private message
+                if(inputToServer.startsWith(Client.priveBerichtIdentifier)) {
+                	String temp = inputToServer.substring(Client.priveBerichtIdentifier.length(), inputToServer.length());
+                	String[] arr = temp.split(Client.priveBerichtIdentifier);
+                	baseServer.writeToSingleSocket(arr[0], arr[1], arr[2]);
+                }
+                //group message
+                else {
+                    baseServer.writeToAllSockets(inputToServer);
+                }
             }
         } catch (SocketException e) {
             baseServer.clientDisconnected(this);
