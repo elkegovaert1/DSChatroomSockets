@@ -84,7 +84,11 @@ public class Client implements Runnable {
                 	String disconnectedClient = inputFromServer.substring(disconnectedClientsIdentifier.length(), inputFromServer.length());
                 	for(priveGesprek p : priveBerichten) {
                 		if(p.getPartner().equals(disconnectedClient)) {
-                			priveBerichten.remove(p);
+                            Platform.runLater(new Runnable() {
+                                @Override public void run() {
+                                    priveBerichten.remove(p);
+                                }
+                            });
                 			break;
                 		}
                 	}
@@ -95,7 +99,11 @@ public class Client implements Runnable {
                 	String[] arr = temp.split(priveBerichtIdentifier);
                 	for(priveGesprek pg : priveBerichten) {
                 		if(pg.getPartner().equals(arr[1])) {
-                			pg.getBerichten().add(arr[1] + " : " + arr[0]);
+                            Platform.runLater(new Runnable() {
+                                @Override public void run() {
+                                    pg.getBerichten().add(arr[1] + " : " + arr[0]);
+                                }
+                            });
                 		}
                 	}
                 }
