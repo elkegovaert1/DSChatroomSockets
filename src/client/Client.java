@@ -20,6 +20,7 @@ public class Client implements Runnable {
 	public static final String connectedClientsIdentifier = "µ(&56fz";
 	public static final String connectedClientsSplitter = "g5ef68zfz3";
 	public static final String disconnectedClientsIdentifier = "a&p7!3";
+	public static final String alreadyUsedIdentifier = "gniarkng";
 	
     private Socket clientSocket;
     private BufferedReader serverToClientReader;
@@ -27,6 +28,7 @@ public class Client implements Runnable {
     private String name;
     public ObservableList<String> chatLog;
     public ObservableList<priveGesprek> priveBerichten;
+    private boolean isDuplicate;
 
     public Client(String name) throws IOException {
 
@@ -38,6 +40,7 @@ public class Client implements Runnable {
                 clientSocket.getOutputStream(), true);
         chatLog = FXCollections.observableArrayList();
         priveBerichten = FXCollections.observableArrayList();
+        isDuplicate = false;
 
         this.name = name;
         clientToServerWriter.println(name);
@@ -107,6 +110,9 @@ public class Client implements Runnable {
                 		}
                 	}
                 }
+                else if(inputFromServer.equals(alreadyUsedIdentifier)) {
+                	isDuplicate = true;
+                }
                 //receive a groupmessage from server
                 else {
                     Platform.runLater(() -> chatLog.add(inputFromServer));
@@ -125,5 +131,8 @@ public class Client implements Runnable {
     }
     public String getName() {
     	return name;
+    }
+    public boolean isDuplicate() {
+    	return isDuplicate;
     }
 }

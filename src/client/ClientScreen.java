@@ -49,7 +49,62 @@ public class ClientScreen extends Application {
         primaryStage.setScene(makeInitScene(primaryStage));
         primaryStage.show();
     }
+    public Scene makeInitSceneWithError(Stage primaryStage, String error) {
+    	GridPane rootPane = new GridPane();
+        rootPane.setPadding(new Insets(20));
+        rootPane.setVgap(10);
+        rootPane.setHgap(10);
+        rootPane.setAlignment(Pos.CENTER);
 
+        TextField nameField = new TextField();
+
+        Label nameLabel = new Label("Name");
+        
+        Label errorLabel = new Label(error);
+        errorLabel.setTextFill(Color.RED);
+
+        Button submitClientInfoButton = new Button("Done");
+
+        submitClientInfoButton.setOnAction(Event -> {
+            Client client;
+            
+            	try {
+            		client = new Client(nameField.getText());
+                    this.client = client;
+                    Thread clientThread = new Thread(client);                    
+                    clientThread.setDaemon(true);
+                    clientThread.start();
+                    threads.add(clientThread);
+                    if(client.isDuplicate()) {
+                    	makeInitSceneWithError(primaryStage, error);                    	
+                    }else {
+                    	/* Change the scene of the primaryStage */
+                        primaryStage.close();
+                        primaryStage.setScene(makeChatUI(primaryStage, client));
+                        primaryStage.setTitle(client.getName());
+                        primaryStage.show();
+                    }                    
+                }
+                catch(ConnectException e){
+                    errorLabel.setTextFill(Color.RED);
+                    errorLabel.setText("Invalid host name, try again");
+                }
+                catch (NumberFormatException | IOException e) {
+                    errorLabel.setTextFill(Color.RED);
+                    errorLabel.setText("Invalid port number, try again");
+                }catch(RuntimeException rte) {
+                	errorLabel.setText("Username already connected");
+                }            
+
+        });
+
+        rootPane.add(nameField, 0, 0);
+        rootPane.add(nameLabel, 1, 0);
+        rootPane.add(submitClientInfoButton, 0, 3, 2, 1);
+        rootPane.add(errorLabel, 0, 4);
+
+        return new Scene(rootPane, 400, 400);
+    }
     public Scene makeInitScene(Stage primaryStage) {
         GridPane rootPane = new GridPane();
         rootPane.setPadding(new Insets(20));
@@ -66,28 +121,30 @@ public class ClientScreen extends Application {
 
         submitClientInfoButton.setOnAction(Event -> {
             Client client;
-            try {
-                client = new Client(nameField.getText());
-                this.client = client;
-                Thread clientThread = new Thread(client);
-                clientThread.setDaemon(true);
-                clientThread.start();
-                threads.add(clientThread);
-
-                /* Change the scene of the primaryStage */
-                primaryStage.close();
-                primaryStage.setScene(makeChatUI(client));
-                primaryStage.setTitle(client.getName());
-                primaryStage.show();
-            }
-            catch(ConnectException e){
-                errorLabel.setTextFill(Color.RED);
-                errorLabel.setText("Invalid host name, try again");
-            }
-            catch (NumberFormatException | IOException e) {
-                errorLabel.setTextFill(Color.RED);
-                errorLabel.setText("Invalid port number, try again");
-            }
+            
+            	try {
+            		client = new Client(nameField.getText());
+                    this.client = client;
+                    Thread clientThread = new Thread(client);                    
+                    clientThread.setDaemon(true);
+                    clientThread.start();
+                    threads.add(clientThread);
+                    
+                    	/* Change the scene of the primaryStage */
+                        primaryStage.close();
+                        primaryStage.setScene(makeChatUI(primaryStage, client));
+                        primaryStage.setTitle(client.getName());
+                        primaryStage.show();
+                                       
+                }
+                catch(ConnectException e){
+                    errorLabel.setTextFill(Color.RED);
+                    errorLabel.setText("Invalid host name, try again");
+                }
+                catch (NumberFormatException | IOException e) {
+                    errorLabel.setTextFill(Color.RED);
+                    errorLabel.setText("Invalid port number, try again");
+                }          
 
         });
 
@@ -99,7 +156,7 @@ public class ClientScreen extends Application {
         return new Scene(rootPane, 400, 400);
     }
 
-    public Scene makeChatUI(Client client) {    		
+    public Scene makeChatUI(Stage primaryStage, Client client) {    		
         GridPane rootPane = new GridPane();
         rootPane.setPadding(new Insets(20));
         rootPane.setAlignment(Pos.CENTER);
@@ -119,10 +176,12 @@ public class ClientScreen extends Application {
         });
 
         rootPane.add(chatListView, 0, 0);
-        rootPane.add(chatTextField, 0, 1);        
-
-        return new Scene(rootPane, 600, 400);
-
+        rootPane.add(chatTextField, 0, 1);
+        if(this.client.isDuplicate()) {
+        	return makeInitSceneWithError(primaryStage, "Username already connected");
+        }else {
+            return new Scene(rootPane, 600, 400);
+        }
     }
     public void handleListClick(priveGesprek pg, GridPane rootPane) {
         ListView<String> priveListView = new ListView<String>();

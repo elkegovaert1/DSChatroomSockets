@@ -53,6 +53,8 @@ public final class Server implements Runnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (RuntimeException rte) {
+        	throw rte;
         }
 
     }
@@ -100,4 +102,12 @@ public final class Server implements Runnable {
     public ObservableList<String> getClientNames(){
     	return clientNames;
     }
+    public static boolean isConnected(String s) {
+    	return clientNames.contains(s);
+    }
+    public void clientAlreadyConnected(ClientThread ct) {
+    	ct.writeToServer(Client.alreadyUsedIdentifier);
+    	clientDisconnected(ct);
+    }
+    
 }
