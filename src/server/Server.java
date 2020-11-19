@@ -45,6 +45,7 @@ public final class Server implements Runnable {
                 final Socket clientSocket = socket.accept();
 
                 clients.add(clientSocket);
+                System.out.println("New user added.");
                 ClientThread clientThreadHolderClass = new ClientThread(clientSocket, this);
                 Thread clientThread = new Thread(clientThreadHolderClass);
                 clientThreads.add(clientThreadHolderClass);
@@ -62,6 +63,7 @@ public final class Server implements Runnable {
     public void clientDisconnected(ClientThread client) {
 
         Platform.runLater(() -> {
+            System.out.println("Client disconnected.");
         	String s = Client.disconnectedClientsIdentifier + clientNames.get(clientThreads.indexOf(client));
             clients.remove(clientThreads.indexOf(client));
             clientNames.remove(clientThreads.indexOf(client));
@@ -74,11 +76,14 @@ public final class Server implements Runnable {
     }
 
     public void writeToAllSockets(String input) {
+        System.out.println("Sending to everyone: " + input);
+
         for (ClientThread clientThread : clientThreads) {
             clientThread.writeToServer(input);
         }
     }
     public void writeToSingleSocket(String input, String sender, String receiver){
+        System.out.println("Sending from " + sender + " to " + receiver + ": " + input);
     	for(ClientThread clientThread : clientThreads) {
     		if(clientThread.getClientName().equals(receiver)) {
     			clientThread.writeToServer(Client.priveBerichtIdentifier + input + Client.priveBerichtIdentifier + sender);
