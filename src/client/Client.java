@@ -77,7 +77,7 @@ public class Client implements Runnable {
                 			}
                 			if(!isAlAanwezig) {
                 				priveGesprek pg = new priveGesprek(this, strarray[i]);
-                    			priveBerichten.add(pg);                    			
+                				Platform.runLater(() -> priveBerichten.add(pg));
                 			}                			
                 		}
                 	}
